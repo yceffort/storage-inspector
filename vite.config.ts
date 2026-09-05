@@ -10,7 +10,7 @@ export default defineConfig({
       fileName: (format) => (format === 'es' ? 'storage-inspector.js' : 'storage-inspector.iife.js'),
     },
   },
-  plugins: [dts()],
+  plugins: [dts({ include: ['src'], exclude: ['src/**/*.test.ts'], entryRoot: 'src' })],
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],

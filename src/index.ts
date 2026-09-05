@@ -15,12 +15,26 @@ export interface Inspector {
 
 let current: StorageInspector | null = null
 
+function mount(el: StorageInspector) {
+  if (document.body) {
+    document.body.appendChild(el)
+    return
+  }
+  document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+      if (current === el) document.body.appendChild(el)
+    },
+    { once: true },
+  )
+}
+
 export function init(options: InitOptions = {}): Inspector {
   current?.remove()
   const el = new StorageInspector()
   el.schema = options.schema ?? []
-  document.body.appendChild(el)
   current = el
+  mount(el)
   return {
     open: () => el.open(),
     close: () => el.close(),
