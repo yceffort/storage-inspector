@@ -2,7 +2,9 @@ import { LitElement, css, html } from 'lit'
 import {
   browserStorages,
   buildEntries,
+  overrideKey,
   removeEntry,
+  writeEntry,
   type Entry,
   type Overrides,
   type SchemaEntry,
@@ -11,6 +13,8 @@ import {
 } from '../core'
 import './si-launcher'
 import './si-panel'
+import './si-entry-sheet'
+import type { SaveDetail } from './si-entry-sheet'
 
 export type SheetState = { mode: 'edit'; entry: Entry } | { mode: 'add' } | null
 
@@ -60,6 +64,24 @@ export class StorageInspector extends LitElement {
     return html`
       <si-launcher @toggle=${this.onToggle}></si-launcher>
       ${this.isOpen ? this.renderPanel() : null}
+      ${this.isOpen && this.sheet ? this.renderSheet() : null}
+    `
+  }
+
+  protected renderSheet() {
+    const s = this.sheet!
+    const existingKeys = this.entries.filter((e) => e.raw !== null).map((e) => overrideKey(e.storage, e.key))
+    return html`
+      <si-entry-sheet
+        .mode=${s.mode}
+        .entry=${s.mode === 'edit' ? s.entry : undefined}
+        .tab=${this.tab}
+        .existingKeys=${existingKeys}
+        .error=${this.sheetError}
+        @save=${this.onSave}
+        @cancel=${this.onCancel}
+        @click=${this.onCancel}
+      ></si-entry-sheet>
     `
   }
 
@@ -99,6 +121,25 @@ export class StorageInspector extends LitElement {
   private onRemove = (ev: CustomEvent<Entry>) => {
     removeEntry(this.storages, ev.detail)
     this.refresh()
+  }
+
+  private onSave = (ev: CustomEvent<SaveDetail>) => {
+    const { key, storage, type, raw } = ev.detail
+    this.overrides.set(overrideKey(storage, key), type)
+    try {
+      writeEntry(this.storages, { key, storage, raw })
+    } catch (e) {
+      this.sheetError = (e as Error).message
+      return
+    }
+    this.sheet = null
+    this.sheetError = ''
+    this.refresh()
+  }
+
+  private onCancel = () => {
+    this.sheet = null
+    this.sheetError = ''
   }
 }
 
