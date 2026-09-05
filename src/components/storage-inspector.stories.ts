@@ -1,4 +1,4 @@
-import { html } from 'lit'
+import { html, nothing } from 'lit'
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { expect, userEvent, waitFor } from 'storybook/test'
 import { allInShadow, findInShadow, inShadow, setValue } from '../../.storybook/shadow'
@@ -14,7 +14,8 @@ const schema: SchemaEntry[] = [
 
 const meta: Meta = {
   title: 'StorageInspector',
-  render: () => html`<storage-inspector .schema=${schema}></storage-inspector>`,
+  render: (_args, { globals }) =>
+    html`<storage-inspector .schema=${schema} theme=${globals.theme === 'dark' ? 'dark' : nothing}></storage-inspector>`,
   beforeEach: () => {
     localStorage.clear()
     sessionStorage.clear()

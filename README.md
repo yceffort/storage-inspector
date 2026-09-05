@@ -26,6 +26,12 @@ inspector.close()
 inspector.destroy()
 ```
 
+`theme: 'light' | 'dark'` 옵션을 주면 시스템 설정과 무관하게 고정된다. 생략하면 `prefers-color-scheme` 을 따른다.
+
+```ts
+init({ schema, theme: 'dark' })
+```
+
 스크립트 태그로 쓸 때:
 
 ```html
@@ -43,6 +49,12 @@ inspector.destroy()
 | `storage` | 예 | `'local'` 또는 `'session'` |
 | `description` | 아니오 | 목록과 시트에 표시되는 설명 |
 | `type` | 아니오 | `'string' | 'number' | 'boolean' | 'json'`. 없으면 값을 보고 추론 |
+
+## 테마
+
+- 색상은 전부 `--si-*` CSS 커스텀 프로퍼티로 정의되어 있고 `<storage-inspector>` 루트에서만 값을 준다. 하위 컴포넌트는 상속받아 쓴다.
+- 기본은 시스템의 `prefers-color-scheme` 을 따르고, 루트의 `theme` 속성(`light` / `dark`)이 있으면 그것이 우선한다. `color-scheme` 도 함께 바뀌어 select, checkbox 같은 네이티브 컨트롤도 테마에 맞춰진다.
+- Storybook 툴바의 Theme 토글로 라이트/다크를 바로 비교할 수 있다.
 
 ## 동작
 

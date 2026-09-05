@@ -11,7 +11,7 @@ export class SiEntryRow extends LitElement {
   static styles = css`
     :host {
       display: block;
-      border-bottom: 1px solid #e5e5e5;
+      border-bottom: 1px solid var(--si-border);
     }
     .row {
       display: flex;
@@ -21,7 +21,7 @@ export class SiEntryRow extends LitElement {
       cursor: pointer;
     }
     .row:active {
-      background: #f5f5f5;
+      background: var(--si-surface);
     }
     .main {
       flex: 1;
@@ -32,11 +32,11 @@ export class SiEntryRow extends LitElement {
       word-break: break-all;
     }
     .desc {
-      color: #666;
+      color: var(--si-muted);
       font-size: 12px;
     }
     .preview {
-      color: #333;
+      color: var(--si-fg);
       font-family: ui-monospace, monospace;
       font-size: 12px;
       white-space: nowrap;
@@ -44,7 +44,7 @@ export class SiEntryRow extends LitElement {
       text-overflow: ellipsis;
     }
     .preview.empty {
-      color: #999;
+      color: var(--si-muted);
       font-style: italic;
     }
     .badge {
@@ -52,18 +52,18 @@ export class SiEntryRow extends LitElement {
       font-size: 11px;
       padding: 1px 6px;
       border-radius: 4px;
-      background: #eef2ff;
-      color: #3b4fbf;
+      background: var(--si-badge-bg);
+      color: var(--si-badge-fg);
       margin-right: 4px;
     }
     .badge.unregistered {
-      background: #fff4e5;
-      color: #9a5b00;
+      background: var(--si-warn-bg);
+      color: var(--si-warn-fg);
     }
     button {
-      border: 1px solid #ddd;
-      background: #fff;
-      color: #c00;
+      border: 1px solid var(--si-border);
+      background: var(--si-bg);
+      color: var(--si-danger);
       border-radius: 4px;
       padding: 6px 8px;
       font-size: 12px;

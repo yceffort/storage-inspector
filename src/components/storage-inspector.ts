@@ -11,16 +11,20 @@ import {
   type StorageKind,
   type Storages,
 } from '../core'
+import { themeStyles } from './theme'
 import './si-launcher'
 import './si-panel'
 import './si-entry-sheet'
 import type { SaveDetail } from './si-entry-sheet'
+
+export type Theme = 'light' | 'dark'
 
 export type SheetState = { mode: 'edit'; entry: Entry } | { mode: 'add' } | null
 
 export class StorageInspector extends LitElement {
   static properties = {
     schema: { attribute: false },
+    theme: { reflect: true },
     isOpen: { state: true },
     tab: { state: true },
     entries: { state: true },
@@ -28,15 +32,19 @@ export class StorageInspector extends LitElement {
     sheetError: { state: true },
   }
 
-  static styles = css`
-    :host {
-      all: initial;
-      font: 14px/1.4 system-ui, -apple-system, sans-serif;
-      color: #111;
-    }
-  `
+  static styles = [
+    themeStyles,
+    css`
+      :host {
+        all: initial;
+        font: 14px/1.4 system-ui, -apple-system, sans-serif;
+        color: var(--si-fg);
+      }
+    `,
+  ]
 
   schema: SchemaEntry[] = []
+  theme: Theme | null = null
   isOpen = false
   tab: StorageKind = 'local'
   entries: Entry[] = []

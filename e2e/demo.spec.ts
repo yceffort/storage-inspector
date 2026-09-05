@@ -82,3 +82,25 @@ test('새로고침 버튼이 외부 변경을 반영한다', async ({ page }) =>
   await page.locator('si-panel header button', { hasText: '새로고침' }).click()
   await expect(rowByKey(page, 'external')).toHaveCount(1)
 })
+
+test.describe('다크 모드', () => {
+  test.use({ colorScheme: 'dark' })
+
+  test('시스템이 다크면 패널이 어두운 배경을 쓴다', async ({ page }) => {
+    await openPanel(page)
+    const bg = await page.locator('si-panel').evaluate((el) => getComputedStyle(el).backgroundColor)
+    expect(bg).toBe('rgb(28, 28, 30)')
+    const scheme = await page.locator('storage-inspector').evaluate((el) => getComputedStyle(el).colorScheme)
+    expect(scheme).toBe('dark')
+  })
+
+  test('theme="light" 를 주면 시스템 설정보다 우선한다', async ({ page }) => {
+    await page.goto('/')
+    await page.evaluate(() => {
+      document.querySelector('storage-inspector')?.setAttribute('theme', 'light')
+    })
+    await page.locator('si-launcher button').click()
+    const bg = await page.locator('si-panel').evaluate((el) => getComputedStyle(el).backgroundColor)
+    expect(bg).toBe('rgb(255, 255, 255)')
+  })
+})

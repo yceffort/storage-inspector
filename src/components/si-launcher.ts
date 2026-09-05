@@ -13,10 +13,10 @@ export class SiLauncher extends LitElement {
       height: 48px;
       border-radius: 50%;
       border: none;
-      background: #1f6feb;
-      color: #fff;
+      background: var(--si-accent);
+      color: var(--si-accent-fg);
       font: 600 14px/1 system-ui, sans-serif;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 8px var(--si-shadow);
       cursor: pointer;
     }
   `

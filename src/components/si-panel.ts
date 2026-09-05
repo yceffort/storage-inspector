@@ -17,14 +17,15 @@ export class SiPanel extends LitElement {
       z-index: 2147483001;
       display: flex;
       flex-direction: column;
-      background: #fff;
+      background: var(--si-bg);
+      color: var(--si-fg);
     }
     header {
       display: flex;
       align-items: center;
       gap: 8px;
       padding: 8px 12px;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--si-border);
     }
     h1 {
       font-size: 15px;
@@ -33,24 +34,26 @@ export class SiPanel extends LitElement {
     }
     .tabs {
       display: flex;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--si-border);
     }
     .tabs button {
       flex: 1;
       padding: 10px;
       border: none;
       background: none;
+      color: var(--si-fg);
       font-size: 14px;
       cursor: pointer;
       border-bottom: 2px solid transparent;
     }
     .tabs button.active {
-      border-bottom-color: #1f6feb;
+      border-bottom-color: var(--si-accent);
       font-weight: 600;
     }
     header button {
-      border: 1px solid #ddd;
-      background: #fff;
+      border: 1px solid var(--si-border);
+      background: var(--si-bg);
+      color: var(--si-fg);
       border-radius: 4px;
       padding: 6px 10px;
       font-size: 13px;
@@ -64,7 +67,7 @@ export class SiPanel extends LitElement {
     .empty {
       padding: 32px;
       text-align: center;
-      color: #999;
+      color: var(--si-muted);
     }
   `
 

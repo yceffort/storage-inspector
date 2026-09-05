@@ -29,10 +29,11 @@ export class SiEntrySheet extends LitElement {
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      background: rgba(0, 0, 0, 0.4);
+      background: var(--si-backdrop);
     }
     .sheet {
-      background: #fff;
+      background: var(--si-bg);
+      color: var(--si-fg);
       border-radius: 12px 12px 0 0;
       padding: 16px;
       max-height: 85vh;
@@ -46,15 +47,17 @@ export class SiEntrySheet extends LitElement {
       flex-direction: column;
       gap: 4px;
       font-size: 12px;
-      color: #555;
+      color: var(--si-muted);
     }
     input,
     select,
     textarea {
       font: 14px/1.4 system-ui, sans-serif;
       padding: 8px;
-      border: 1px solid #ccc;
+      border: 1px solid var(--si-input-border);
       border-radius: 6px;
+      background: var(--si-input-bg);
+      color: var(--si-fg);
     }
     textarea {
       font-family: ui-monospace, monospace;
@@ -62,11 +65,11 @@ export class SiEntrySheet extends LitElement {
     }
     .fixed {
       font-size: 14px;
-      color: #111;
+      color: var(--si-fg);
       word-break: break-all;
     }
     .error {
-      color: #c00;
+      color: var(--si-danger);
       font-size: 12px;
     }
     .actions {
@@ -77,15 +80,16 @@ export class SiEntrySheet extends LitElement {
     .actions button {
       padding: 8px 16px;
       border-radius: 6px;
-      border: 1px solid #ccc;
-      background: #fff;
+      border: 1px solid var(--si-input-border);
+      background: var(--si-bg);
+      color: var(--si-fg);
       font-size: 14px;
       cursor: pointer;
     }
     .actions button.primary {
-      background: #1f6feb;
-      color: #fff;
-      border-color: #1f6feb;
+      background: var(--si-accent);
+      color: var(--si-accent-fg);
+      border-color: var(--si-accent);
     }
     .actions button:disabled {
       opacity: 0.5;
@@ -146,7 +150,7 @@ export class SiEntrySheet extends LitElement {
             `
           : html`
               <div class="fixed">${this.storage}Storage / <strong>${this.key}</strong></div>
-              ${this.entry?.description ? html`<div class="fixed" style="color:#666">${this.entry.description}</div>` : null}
+              ${this.entry?.description ? html`<div class="fixed" style="color: var(--si-muted)">${this.entry.description}</div>` : null}
             `}
         <label>
           타입
