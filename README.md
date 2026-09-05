@@ -19,13 +19,13 @@ Lit 웹 컴포넌트로 만들었고 Shadow DOM 을 써서 호스트 앱의 CSS 
 ## 설치
 
 ```bash
-pnpm add storage-inspector
+pnpm add @yceffort/storage-inspector
 ```
 
 ## 사용
 
 ```ts
-import { init } from 'storage-inspector'
+import { init } from '@yceffort/storage-inspector'
 
 const inspector = init({
   schema: [
@@ -43,7 +43,7 @@ inspector.destroy()
 스크립트 태그로 쓸 때는 IIFE 빌드를 넣고 전역 `StorageInspector` 를 호출합니다. `<head>` 에 넣어도 body 가 생긴 뒤 마운트되므로 위치는 상관없습니다.
 
 ```html
-<script src="https://unpkg.com/storage-inspector/dist/storage-inspector.iife.js"></script>
+<script src="https://unpkg.com/@yceffort/storage-inspector/dist/storage-inspector.iife.js"></script>
 <script>
   StorageInspector.init({ schema: [/* ... */] })
 </script>
@@ -133,3 +133,7 @@ pnpm build
 - `e2e/*.spec.ts`: Vite dev 서버 위의 데모 페이지와 IIFE 번들을 `<head>` 에 넣은 페이지를 Playwright 로 검증합니다.
 
 CI 는 GitHub Actions 에서 main 푸시와 PR 마다 typecheck, 단위 테스트, Storybook 테스트, 빌드, E2E 를 순서대로 돌립니다.
+
+## 라이선스
+
+MIT

@@ -1,7 +1,7 @@
 import { StorageInspector, type Theme } from './components/storage-inspector'
 import type { SchemaEntry } from './core'
 
-export type { SchemaEntry, Entry, StorageKind, ValueType } from './core'
+export type { SchemaEntry, Entry, StorageKind, ValueType, StandardSchemaV1 } from './core'
 export type { Theme }
 
 export interface InitOptions {

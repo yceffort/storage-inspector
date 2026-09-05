@@ -1,7 +1,26 @@
 {
-  "name": "storage-inspector",
+  "name": "@yceffort/storage-inspector",
   "version": "0.1.0",
   "description": "Schema-aware localStorage/sessionStorage inspector for webviews",
+  "keywords": [
+    "localStorage",
+    "sessionStorage",
+    "devtools",
+    "debug",
+    "webview",
+    "vconsole",
+    "lit",
+    "web-components",
+    "inspector"
+  ],
+  "license": "MIT",
+  "author": "yceffort",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yceffort/storage-inspector.git"
+  },
+  "homepage": "https://github.com/yceffort/storage-inspector#readme",
+  "bugs": "https://github.com/yceffort/storage-inspector/issues",
   "type": "module",
   "files": [
     "dist"
@@ -16,6 +35,9 @@
       "import": "./dist/storage-inspector.js"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -25,7 +47,8 @@
     "test:e2e": "playwright test",
     "test:all": "vitest run && playwright test",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "prepublishOnly": "pnpm test && pnpm build"
   },
   "dependencies": {
     "lit": "^3.3.3"
