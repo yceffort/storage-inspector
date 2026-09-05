@@ -1,0 +1,8 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>iife head injection</title>
+<script src="/dist/storage-inspector.iife.js"></script>
+<script>
+  localStorage.setItem('foo', '1')
+  StorageInspector.init({ schema: [{ key: 'foo', storage: 'local', type: 'number', description: '푸' }] })
+</script>

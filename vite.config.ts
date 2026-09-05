@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 
 export default defineConfig({
@@ -10,9 +10,5 @@ export default defineConfig({
       fileName: (format) => (format === 'es' ? 'storage-inspector.js' : 'storage-inspector.iife.js'),
     },
   },
-  plugins: [dts({ include: ['src'], exclude: ['src/**/*.test.ts'], entryRoot: 'src' })],
-  test: {
-    environment: 'node',
-    include: ['src/**/*.test.ts'],
-  },
+  plugins: [dts({ include: ['src'], exclude: ['src/**/*.test.ts', 'src/**/*.stories.ts'], entryRoot: 'src' })],
 })

@@ -14,7 +14,7 @@
 - Vite 라이브러리 모드. 산출물은 두 가지.
   - ESM: npm 사용자용. Lit 은 peerDependency 가 아니라 번들에 포함한다 (호스트 앱이 Lit 을 쓰지 않는 경우가 대부분이고, 버전 충돌보다 삽입 편의를 우선).
   - IIFE: `window.StorageInspector` 전역을 노출하는 단일 파일. 웹뷰에 `<script src>` 한 줄로 넣는 용도.
-- 테스트는 Vitest. 코어 모듈만 단위 테스트하고 컴포넌트는 데모 페이지로 수동 확인한다.
+- 테스트는 Vitest. 코어 모듈은 단위 테스트, 컴포넌트는 Storybook 스토리의 play 함수(Vitest 브라우저 모드)와 Playwright E2E 로 검증한다.
 
 ## 공개 API
 
@@ -166,7 +166,7 @@ Vitest 로 코어 모듈만 단위 테스트한다. 저장소는 `Storage` 인�
 - 타입별 변환: 각 타입의 입력 -> raw -> 표시 왕복. number 검증 실패 케이스(`""`, `"abc"`, `"Infinity"`). json 검증 실패 케이스.
 - `writeEntry` / `removeEntry`: 가짜 storage 에 반영되는지, `setItem` 예외가 전달되는지.
 
-컴포넌트는 `demo/index.html` 에서 수동 확인한다. 데모 페이지는 스키마 3개(string, boolean, json)와 미등록 키 2개(number 로 추론될 값, 일반 문자열)를 미리 심는다.
+컴포넌트는 Storybook 스토리의 `play` 함수(Vitest 브라우저 모드)와 Playwright E2E 로 검증한다. 2026-09-05 추가. 데모 페이지는 스키마 3개(string, boolean, json)와 미등록 키 2개(number 로 추론될 값, 일반 문자열)를 미리 심는다.
 
 ## 빌드와 배포 형태
 
@@ -177,7 +177,6 @@ Vitest 로 코어 모듈만 단위 테스트한다. 저장소는 `Storage` 인�
 ## 범위 밖
 
 - 쿠키, IndexedDB
-- 컴포넌트 자동화 테스트
 - 실시간 갱신(폴링, Storage.prototype 패치). 새로고침 버튼으로 대신한다.
 - 타입 오버라이드 영구 저장
 - enum, date 등 추가 타입
