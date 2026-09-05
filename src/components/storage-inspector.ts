@@ -2,6 +2,7 @@ import { LitElement, css, html } from 'lit'
 import {
   browserStorages,
   buildEntries,
+  removeEntry,
   type Entry,
   type Overrides,
   type SchemaEntry,
@@ -9,6 +10,7 @@ import {
   type Storages,
 } from '../core'
 import './si-launcher'
+import './si-panel'
 
 export type SheetState = { mode: 'edit'; entry: Entry } | { mode: 'add' } | null
 
@@ -45,12 +47,12 @@ export class StorageInspector extends LitElement {
     this.isOpen = true
   }
 
-  close() {
+  close = () => {
     this.sheet = null
     this.isOpen = false
   }
 
-  protected refresh() {
+  protected refresh = () => {
     this.entries = buildEntries(this.schema, this.overrides, this.storages)
   }
 
@@ -62,11 +64,41 @@ export class StorageInspector extends LitElement {
   }
 
   protected renderPanel() {
-    return html`<div style="position:fixed;inset:0;background:#fff;z-index:2147483001" @click=${this.close}>panel</div>`
+    return html`
+      <si-panel
+        .entries=${this.entries}
+        .tab=${this.tab}
+        @tab-change=${this.onTabChange}
+        @refresh=${this.refresh}
+        @add=${this.onAdd}
+        @close=${this.close}
+        @select=${this.onSelect}
+        @remove=${this.onRemove}
+      ></si-panel>
+    `
   }
 
   private onToggle = () => {
     this.isOpen ? this.close() : this.open()
+  }
+
+  private onTabChange = (ev: CustomEvent<StorageKind>) => {
+    this.tab = ev.detail
+  }
+
+  private onAdd = () => {
+    this.sheet = { mode: 'add' }
+    this.sheetError = ''
+  }
+
+  private onSelect = (ev: CustomEvent<Entry>) => {
+    this.sheet = { mode: 'edit', entry: ev.detail }
+    this.sheetError = ''
+  }
+
+  private onRemove = (ev: CustomEvent<Entry>) => {
+    removeEntry(this.storages, ev.detail)
+    this.refresh()
   }
 }
 
