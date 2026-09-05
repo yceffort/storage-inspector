@@ -1,0 +1,32 @@
+{
+  "name": "storage-inspector",
+  "version": "0.1.0",
+  "description": "Schema-aware localStorage/sessionStorage inspector for webviews",
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/storage-inspector.js",
+  "module": "./dist/storage-inspector.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/storage-inspector.iife.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/storage-inspector.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lit": "^3.3.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "vite": "^8.2.2",
+    "vite-plugin-dts": "^5.1.0",
+    "vitest": "^5.0.0"
+  }
+}
