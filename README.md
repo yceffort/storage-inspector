@@ -70,8 +70,30 @@ init({ schema, theme: 'dark', bottomOffset: 56, zIndex: 1000 })
 | `storage` | 예 | `'local'` 또는 `'session'` |
 | `description` | 아니오 | 목록과 시트에 표시되는 설명 |
 | `type` | 아니오 | `'string' \| 'number' \| 'boolean' \| 'json'`. 없으면 값을 보고 추론 |
+| `options` | 아니오 | string 타입에서 허용하는 값 목록. 주면 입력기가 드롭다운으로 바뀌고 목록 밖의 값은 저장이 막힘 |
+| `validate` | 아니오 | 저장 전에 파싱된 값을 검사하는 [Standard Schema](https://standardschema.dev) 객체. zod, valibot, arktype 스키마를 그대로 넘기면 됨 |
 
 타입 추론 규칙: `"true"`/`"false"` 는 boolean, 유한한 숫자로 읽히면 number, 객체나 배열 JSON 이면 json, 나머지는 string 입니다.
+
+### TypeScript 타입과 연결하기
+
+`type: 'json'` 은 "JSON 으로 파싱된다" 까지만 보장합니다. 값의 실제 형태를 강제하려면 `validate` 에 Standard Schema 를 넘기십시오. 시트가 저장 직전에 파싱된 값을 검증기로 넘기고, 실패하면 경로와 메시지를 보여주며 저장 버튼을 잠급니다. 리터럴 유니온은 `options` 로 드롭다운을 만듭니다.
+
+```ts
+import { z } from 'zod'
+
+const Draft = z.object({ title: z.string().min(1), tags: z.array(z.string()) })
+type Draft = z.infer<typeof Draft> // 앱 코드에서 같은 타입을 공유
+
+init({
+  schema: [
+    { key: 'draft', storage: 'session', type: 'json', validate: Draft },
+    { key: 'theme', storage: 'local', options: ['light', 'dark', 'system'] satisfies Theme[] },
+  ],
+})
+```
+
+검증기는 도구가 직접 의존하지 않고 `~standard` 인터페이스만 호출하므로 번들 크기에 영향이 없습니다. 비동기 검증기도 지원합니다.
 
 ## 동작
 

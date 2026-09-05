@@ -17,13 +17,30 @@
       localStorage.setItem('retryCount', '3')
       localStorage.setItem('lastVisited', '/home')
       sessionStorage.setItem('draft', JSON.stringify({ title: '초안', tags: ['a', 'b'] }))
+      localStorage.setItem('theme', 'light')
+
+
+      // zod 같은 Standard Schema 구현체를 그대로 넘길 수 있다. 데모는 의존성 없이 손으로 만든 것.
+      const draftSchema = {
+        '~standard': {
+          version: 1,
+          vendor: 'demo',
+          validate: (value) => {
+            const issues = []
+            if (typeof value.title !== 'string' || value.title === '') issues.push({ message: '비어 있지 않은 문자열이어야 합니다', path: ['title'] })
+            if (!Array.isArray(value.tags) || value.tags.some((t) => typeof t !== 'string')) issues.push({ message: '문자열 배열이어야 합니다', path: ['tags'] })
+            return issues.length ? { issues } : { value }
+          },
+        },
+      }
 
       StorageInspector.init({
         schema: [
           { key: 'accessToken', description: '인증 토큰', type: 'string', storage: 'local' },
           { key: 'darkMode', description: '다크모드', type: 'boolean', storage: 'local' },
-          { key: 'draft', description: '작성 중 글', type: 'json', storage: 'session' },
+          { key: 'draft', description: '작성 중 글 (Standard Schema 검증)', type: 'json', storage: 'session', validate: draftSchema },
           { key: 'neverSet', description: '아직 값 없는 키', type: 'number', storage: 'local' },
+          { key: 'theme', description: '테마 (허용값만 선택)', storage: 'local', options: ['light', 'dark', 'system'] },
         ],
       })
     </script>

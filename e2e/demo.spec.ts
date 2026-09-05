@@ -11,7 +11,7 @@ const rowByKey = (page: Page, key: string) => page.locator('si-entry-row').filte
 test('스키마 항목과 미등록 항목을 함께 보여준다', async ({ page }) => {
   await openPanel(page)
   const keys = await page.locator('si-entry-row .key').allTextContents()
-  expect(keys).toEqual(['accessToken', 'darkMode', 'neverSet', 'retryCount', 'lastVisited'])
+  expect(keys).toEqual(['accessToken', 'darkMode', 'neverSet', 'theme', 'retryCount', 'lastVisited'])
   await expect(rowByKey(page, 'retryCount').locator('.badge.unregistered')).toHaveText('미등록')
   await expect(rowByKey(page, 'neverSet').locator('.preview')).toHaveText('값 없음')
 
@@ -39,9 +39,9 @@ test('잘못된 JSON 은 저장을 막는다', async ({ page }) => {
   await textarea.fill('{"title": ')
   await expect(page.locator('si-entry-sheet .error')).toContainText('JSON 파싱 실패')
   await expect(page.locator('si-entry-sheet button.primary')).toBeDisabled()
-  await textarea.fill('{"title": "수정"}')
+  await textarea.fill('{"title": "수정", "tags": []}')
   await page.locator('si-entry-sheet button.primary').click()
-  expect(await page.evaluate(() => sessionStorage.getItem('draft'))).toBe('{"title":"수정"}')
+  expect(await page.evaluate(() => sessionStorage.getItem('draft'))).toBe('{"title":"수정","tags":[]}')
 })
 
 test('바꾼 타입은 패널을 닫았다 열어도 유지된다', async ({ page }) => {
@@ -124,4 +124,28 @@ test('z-index 속성으로 런처/패널/시트 순서를 조정한다', async (
   await expect(page.locator('si-panel')).toHaveCSS('z-index', '501')
   await rowByKey(page, 'darkMode').locator('.row').click()
   await expect(page.locator('si-entry-sheet')).toHaveCSS('z-index', '502')
+})
+
+test('options 가 있는 키는 드롭다운으로만 고른다', async ({ page }) => {
+  await openPanel(page)
+  await rowByKey(page, 'theme').locator('.row').click()
+  const select = page.locator('si-entry-sheet select.options')
+  await expect(select).toHaveValue('light')
+  await select.selectOption('dark')
+  await page.locator('si-entry-sheet button.primary').click()
+  expect(await page.evaluate(() => localStorage.getItem('theme'))).toBe('dark')
+})
+
+test('Standard Schema 검증에 실패하면 저장이 막힌다', async ({ page }) => {
+  await openPanel(page)
+  await page.locator('si-panel .tabs button', { hasText: 'sessionStorage' }).click()
+  await rowByKey(page, 'draft').locator('.row').click()
+  const textarea = page.locator('si-entry-sheet textarea')
+  await textarea.fill('{"title": "", "tags": [1]}')
+  await expect(page.locator('si-entry-sheet .error')).toHaveText('title: 비어 있지 않은 문자열이어야 합니다\ntags: 문자열 배열이어야 합니다')
+  await expect(page.locator('si-entry-sheet button.primary')).toBeDisabled()
+  await textarea.fill('{"title": "수정", "tags": ["a"]}')
+  await expect(page.locator('si-entry-sheet button.primary')).toBeEnabled()
+  await page.locator('si-entry-sheet button.primary').click()
+  expect(await page.evaluate(() => sessionStorage.getItem('draft'))).toBe('{"title":"수정","tags":["a"]}')
 })

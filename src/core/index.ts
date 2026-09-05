@@ -10,3 +10,4 @@ export {
   type Storages,
   type Overrides,
 } from './entries'
+export { parseRaw, checkOptions, validateWithSchema } from './validate'

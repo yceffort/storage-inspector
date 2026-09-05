@@ -1,5 +1,15 @@
 import { LitElement, css, html } from 'lit'
-import { VALUE_TYPES, overrideKey, toDisplay, toRaw, type Entry, type StorageKind, type ValueType } from '../core'
+import {
+  VALUE_TYPES,
+  checkOptions,
+  overrideKey,
+  toDisplay,
+  toRaw,
+  validateWithSchema,
+  type Entry,
+  type StorageKind,
+  type ValueType,
+} from '../core'
 import { bottomInset } from './theme'
 
 export interface SaveDetail {
@@ -20,6 +30,8 @@ export class SiEntrySheet extends LitElement {
     storage: { state: true },
     type: { state: true },
     input: { state: true },
+    schemaError: { state: true },
+    pending: { state: true },
   }
 
   static styles = css`
@@ -72,6 +84,11 @@ export class SiEntrySheet extends LitElement {
     .error {
       color: var(--si-danger);
       font-size: 12px;
+      white-space: pre-line;
+    }
+    .pending {
+      color: var(--si-muted);
+      font-size: 12px;
     }
     .actions {
       display: flex;
@@ -108,6 +125,9 @@ export class SiEntrySheet extends LitElement {
   storage: StorageKind = 'local'
   type: ValueType = 'string'
   input = ''
+  schemaError = ''
+  pending = false
+  private validationSeq = 0
 
   connectedCallback() {
     super.connectedCallback()
@@ -130,12 +150,42 @@ export class SiEntrySheet extends LitElement {
       if (this.existingKeys.includes(overrideKey(this.storage, this.key))) return '이미 있는 키입니다'
     }
     const result = toRaw(this.type, this.input)
-    return result.ok ? '' : result.error
+    if (!result.ok) return result.error
+    if (this.type === 'string') return checkOptions(this.entry?.options, result.raw)
+    return ''
+  }
+
+  protected updated(changed: Map<PropertyKey, unknown>) {
+    if (changed.has('input') || changed.has('type')) void this.runSchemaValidation()
+  }
+
+  /** 동기 검증을 통과한 값만 Standard Schema 로 넘긴다. 늦게 도착한 결과는 seq 로 버린다. */
+  private async runSchemaValidation() {
+    const schema = this.entry?.validate
+    const seq = ++this.validationSeq
+    if (!schema || this.validate() !== '') {
+      this.schemaError = ''
+      this.pending = false
+      return
+    }
+    const result = toRaw(this.type, this.input)
+    if (!result.ok) return
+    this.pending = true
+    let message = ''
+    try {
+      message = await validateWithSchema(schema, this.type, result.raw)
+    } catch (e) {
+      message = `검증기 오류: ${(e as Error).message}`
+    }
+    if (seq !== this.validationSeq) return
+    this.schemaError = message
+    this.pending = false
   }
 
   render() {
     const validation = this.validate()
-    const message = validation || this.error
+    const message = validation || this.schemaError || this.error
+    const blocked = validation !== '' || this.schemaError !== '' || this.pending
     return html`
       <div class="sheet" @click=${(e: Event) => e.stopPropagation()}>
         ${this.mode === 'add'
@@ -160,10 +210,10 @@ export class SiEntrySheet extends LitElement {
           </select>
         </label>
         <label>값 ${this.renderInput()}</label>
-        ${message ? html`<div class="error">${message}</div>` : null}
+        ${message ? html`<div class="error">${message}</div>` : this.pending ? html`<div class="pending">검증 중…</div>` : null}
         <div class="actions">
           <button type="button" @click=${this.onCancel}>취소</button>
-          <button type="button" class="primary" ?disabled=${validation !== ''} @click=${this.onSave}>저장</button>
+          <button type="button" class="primary" ?disabled=${blocked} @click=${this.onSave}>저장</button>
         </div>
       </div>
     `
@@ -182,8 +232,18 @@ export class SiEntrySheet extends LitElement {
         return html`<input inputmode="decimal" .value=${this.input} @input=${this.onInput} />`
       case 'json':
         return html`<textarea .value=${this.input} @input=${this.onInput} spellcheck="false"></textarea>`
-      case 'string':
-        return html`<input .value=${this.input} @input=${this.onInput} autocapitalize="off" autocomplete="off" />`
+      case 'string': {
+        const options = this.entry?.options
+        if (!options) {
+          return html`<input .value=${this.input} @input=${this.onInput} autocapitalize="off" autocomplete="off" />`
+        }
+        const values = options.includes(this.input) ? options : [this.input, ...options]
+        return html`
+          <select class="options" .value=${this.input} @change=${this.onInput}>
+            ${values.map((v) => html`<option value=${v} ?selected=${v === this.input}>${v}${options.includes(v) ? '' : ' (허용되지 않는 현재 값)'}</option>`)}
+          </select>
+        `
+      }
     }
   }
 
@@ -200,7 +260,7 @@ export class SiEntrySheet extends LitElement {
   }
 
   private onInput = (e: Event) => {
-    this.input = (e.target as HTMLInputElement | HTMLTextAreaElement).value
+    this.input = (e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).value
   }
 
   private onToggle = (e: Event) => {
@@ -212,6 +272,7 @@ export class SiEntrySheet extends LitElement {
   }
 
   private onSave = () => {
+    if (this.validate() !== '' || this.schemaError !== '' || this.pending) return
     const result = toRaw(this.type, this.input)
     if (!result.ok) return
     const detail: SaveDetail = { key: this.key, storage: this.storage, type: this.type, raw: result.raw }

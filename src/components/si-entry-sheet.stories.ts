@@ -127,3 +127,67 @@ export const WithWriteError: Story = {
     await expect(args.onCancel).toHaveBeenCalledTimes(1)
   },
 }
+
+export const EditWithOptions: Story = {
+  args: {
+    entry: { key: 'theme', storage: 'local', description: '테마', type: 'string', raw: 'light', registered: true, options: ['light', 'dark', 'system'] },
+  },
+  play: async ({ canvasElement, args }) => {
+    const host = canvasElement.querySelector('si-entry-sheet')
+    const select = await findInShadow<HTMLSelectElement>(host, 'select.options')
+    await expect([...select.options].map((o) => o.value)).toEqual(['light', 'dark', 'system'])
+    await expect(select.value).toBe('light')
+    await userEvent.selectOptions(select, 'dark')
+    await waitFor(() => expect(saveButton(host).disabled).toBe(false))
+    await userEvent.click(saveButton(host))
+    await expect(args.onSave.mock.calls[0]?.[0].detail.raw).toBe('dark')
+  },
+}
+
+export const EditWithOptionsInvalidCurrent: Story = {
+  args: {
+    entry: { key: 'theme', storage: 'local', type: 'string', raw: 'sepia', registered: true, options: ['light', 'dark'] },
+  },
+  play: async ({ canvasElement }) => {
+    const host = canvasElement.querySelector('si-entry-sheet')
+    const select = await findInShadow<HTMLSelectElement>(host, 'select.options')
+    await expect(select.value).toBe('sepia')
+    await expect(errorText(host)).toBe('허용된 값이 아닙니다: light, dark')
+    await expect(saveButton(host).disabled).toBe(true)
+    await userEvent.selectOptions(select, 'dark')
+    await waitFor(() => expect(saveButton(host).disabled).toBe(false))
+  },
+}
+
+const draftSchema = {
+  '~standard': {
+    version: 1 as const,
+    vendor: 'story',
+    validate: (value: unknown) => {
+      const v = value as { title?: unknown; tags?: unknown }
+      const issues = []
+      if (typeof v.title !== 'string' || v.title === '') issues.push({ message: '비어 있지 않은 문자열이어야 합니다', path: ['title'] })
+      if (!Array.isArray(v.tags)) issues.push({ message: '배열이어야 합니다', path: ['tags'] })
+      return issues.length ? { issues } : { value }
+    },
+  },
+}
+
+export const EditWithValidate: Story = {
+  args: {
+    entry: { key: 'draft', storage: 'session', type: 'json', raw: '{"title":"초안","tags":[]}', registered: true, validate: draftSchema },
+  },
+  play: async ({ canvasElement, args }) => {
+    const host = canvasElement.querySelector('si-entry-sheet')
+    const textarea = await findInShadow<HTMLTextAreaElement>(host, 'textarea')
+    setValue(textarea, '{"title": "", "tags": "x"}')
+    await waitFor(() => expect(errorText(host)).toBe('title: 비어 있지 않은 문자열이어야 합니다\ntags: 배열이어야 합니다'))
+    await expect(saveButton(host).disabled).toBe(true)
+
+    setValue(textarea, '{"title": "수정", "tags": ["a"]}')
+    await waitFor(() => expect(saveButton(host).disabled).toBe(false))
+    await expect(errorText(host)).toBe('')
+    await userEvent.click(saveButton(host))
+    await expect(args.onSave.mock.calls[0]?.[0].detail.raw).toBe('{"title":"수정","tags":["a"]}')
+  },
+}

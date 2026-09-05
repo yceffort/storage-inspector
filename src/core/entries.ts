@@ -23,9 +23,11 @@ export function buildEntries(schema: SchemaEntry[], overrides: Overrides, storag
       key: item.key,
       storage: item.storage,
       description: item.description,
-      type: overrides.get(id) ?? item.type ?? inferType(raw),
+      type: overrides.get(id) ?? item.type ?? (item.options ? 'string' : inferType(raw)),
       raw,
       registered: true,
+      options: item.options,
+      validate: item.validate,
     })
   }
 
