@@ -134,6 +134,17 @@ pnpm build
 
 CI 는 GitHub Actions 에서 main 푸시와 PR 마다 typecheck, 단위 테스트, Storybook 테스트, 빌드, E2E 를 순서대로 돌립니다.
 
+## 배포
+
+`v*` 태그를 푸시하면 Release 워크플로가 npm Trusted Publishing(OIDC)으로 provenance 를 붙여 배포합니다. 로컬 토큰은 쓰지 않습니다.
+
+```bash
+npm version patch          # package.json 버전과 v* 태그를 함께 올림
+git push --follow-tags
+```
+
+태그와 package.json 버전이 다르면 워크플로가 실패합니다. 첫 배포(0.1.0)만 로컬에서 `npm publish` 로 올렸고, 그 뒤 npm 패키지 설정에서 이 저장소의 `release.yml` 을 Trusted publisher 로 연결했습니다.
+
 ## 라이선스
 
 MIT

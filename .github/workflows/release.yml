@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - name: Use npm with trusted publishing support
+        run: npm install -g npm@latest
+      - run: pnpm install --frozen-lockfile
+      - name: Tag must match package.json version
+        run: |
+          expected="v$(node -p "require('./package.json').version")"
+          test "$expected" = "$GITHUB_REF_NAME" || { echo "tag $GITHUB_REF_NAME != $expected"; exit 1; }
+      # prepublishOnly 가 pnpm test && pnpm build 를 실행한다
+      - run: npm publish --provenance --access public
