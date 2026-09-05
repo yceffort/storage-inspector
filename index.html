@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>storage-inspector demo</title>
+    <style>
+      body { font-family: system-ui, sans-serif; padding: 16px; }
+      pre { background: #f4f4f4; padding: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>storage-inspector demo</h1>
+    <p>우측 하단 버튼을 눌러 패널을 엽니다. 아래는 현재 localStorage 스냅샷입니다.</p>
+    <button id="dump">localStorage 덤프</button>
+    <pre id="out"></pre>
+    <script type="module">
+      import { init } from '/src/index.ts'
+
+      localStorage.setItem('accessToken', 'eyJhbGciOi.example.token')
+      localStorage.setItem('darkMode', 'true')
+      localStorage.setItem('retryCount', '3')
+      localStorage.setItem('lastVisited', '/home')
+      sessionStorage.setItem('draft', JSON.stringify({ title: '초안', tags: ['a', 'b'] }))
+
+      init({
+        schema: [
+          { key: 'accessToken', description: '인증 토큰', type: 'string', storage: 'local' },
+          { key: 'darkMode', description: '다크모드', type: 'boolean', storage: 'local' },
+          { key: 'draft', description: '작성 중 글', type: 'json', storage: 'session' },
+          { key: 'neverSet', description: '아직 값 없는 키', type: 'number', storage: 'local' },
+        ],
+      })
+
+      document.getElementById('dump').onclick = () => {
+        document.getElementById('out').textContent = JSON.stringify({ ...localStorage }, null, 2)
+      }
+    </script>
+  </body>
+</html>
