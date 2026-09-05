@@ -32,6 +32,12 @@ inspector.destroy()
 init({ schema, theme: 'dark' })
 ```
 
+`bottomOffset` (px) 을 주면 런처 버튼, 편집 시트, 목록 하단 여백이 그만큼 위로 밀린다. 웹뷰 아래에 네이티브 탭바가 깔려 있어 하단이 가려지는 경우에 쓴다. iOS 홈 인디케이터 영역(`env(safe-area-inset-bottom)`)은 옵션 없이도 항상 더해진다.
+
+```ts
+init({ schema, bottomOffset: 56 })
+```
+
 스크립트 태그로 쓸 때:
 
 ```html

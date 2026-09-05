@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit'
 import type { Entry, StorageKind } from '../core'
+import { bottomInset } from './theme'
 import './si-entry-row'
 
 const TABS: readonly StorageKind[] = ['local', 'session']
@@ -63,6 +64,7 @@ export class SiPanel extends LitElement {
       flex: 1;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      padding-bottom: ${bottomInset};
     }
     .empty {
       padding: 32px;

@@ -25,6 +25,7 @@ export class StorageInspector extends LitElement {
   static properties = {
     schema: { attribute: false },
     theme: { reflect: true },
+    bottomOffset: { attribute: 'bottom-offset', type: Number, reflect: true },
     isOpen: { state: true },
     tab: { state: true },
     entries: { state: true },
@@ -45,6 +46,7 @@ export class StorageInspector extends LitElement {
 
   schema: SchemaEntry[] = []
   theme: Theme | null = null
+  bottomOffset = 0
   isOpen = false
   tab: StorageKind = 'local'
   entries: Entry[] = []
@@ -62,6 +64,12 @@ export class StorageInspector extends LitElement {
   close = () => {
     this.sheet = null
     this.isOpen = false
+  }
+
+  protected updated(changed: Map<PropertyKey, unknown>) {
+    if (changed.has('bottomOffset')) {
+      this.style.setProperty('--si-bottom-offset', `${this.bottomOffset}px`)
+    }
   }
 
   protected refresh = () => {

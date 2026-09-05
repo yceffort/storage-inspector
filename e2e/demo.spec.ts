@@ -104,3 +104,13 @@ test.describe('다크 모드', () => {
     expect(bg).toBe('rgb(255, 255, 255)')
   })
 })
+
+test('bottom-offset 만큼 런처와 시트가 위로 밀린다', async ({ page }) => {
+  await page.goto('/')
+  await page.locator('storage-inspector').evaluate((el) => el.setAttribute('bottom-offset', '56'))
+  await expect(page.locator('si-launcher')).toHaveCSS('bottom', '72px')
+  await page.locator('si-launcher button').click()
+  await rowByKey(page, 'darkMode').locator('.row').click()
+  await expect(page.locator('si-entry-sheet .sheet')).toHaveCSS('padding-bottom', '72px')
+  await expect(page.locator('si-panel .list')).toHaveCSS('padding-bottom', '56px')
+})

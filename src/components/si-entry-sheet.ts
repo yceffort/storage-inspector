@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit'
 import { VALUE_TYPES, overrideKey, toDisplay, toRaw, type Entry, type StorageKind, type ValueType } from '../core'
+import { bottomInset } from './theme'
 
 export interface SaveDetail {
   key: string
@@ -35,7 +36,7 @@ export class SiEntrySheet extends LitElement {
       background: var(--si-bg);
       color: var(--si-fg);
       border-radius: 12px 12px 0 0;
-      padding: 16px;
+      padding: 16px 16px calc(16px + ${bottomInset});
       max-height: 85vh;
       overflow-y: auto;
       display: flex;

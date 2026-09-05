@@ -12,10 +12,20 @@ const schema: SchemaEntry[] = [
   { key: 'neverSet', description: '아직 값 없는 키', type: 'number', storage: 'local' },
 ]
 
-const meta: Meta = {
+interface Args {
+  bottomOffset: number
+}
+
+const meta: Meta<Args> = {
   title: 'StorageInspector',
-  render: (_args, { globals }) =>
-    html`<storage-inspector .schema=${schema} theme=${globals.theme === 'dark' ? 'dark' : nothing}></storage-inspector>`,
+  args: { bottomOffset: 0 },
+  argTypes: { bottomOffset: { control: { type: 'range', min: 0, max: 120, step: 4 } } },
+  render: (args, { globals }) =>
+    html`<storage-inspector
+      .schema=${schema}
+      .bottomOffset=${args.bottomOffset}
+      theme=${globals.theme === 'dark' ? 'dark' : nothing}
+    ></storage-inspector>`,
   beforeEach: () => {
     localStorage.clear()
     sessionStorage.clear()
@@ -31,7 +41,7 @@ const meta: Meta = {
 }
 
 export default meta
-type Story = StoryObj
+type Story = StoryObj<Args>
 
 type RowEl = HTMLElement & { entry: Entry }
 
@@ -93,5 +103,17 @@ export const FullFlow: Story = {
     await userEvent.click(inShadow<HTMLButtonElement>(sheet3, 'button.primary'))
     await waitFor(() => expect(localStorage.getItem('newKey')).toBe('hello'))
     await expect(row(reopened, 'newKey').entry.registered).toBe(false)
+  },
+}
+
+export const WithBottomOffset: Story = {
+  args: { bottomOffset: 80 },
+  play: async ({ canvasElement }) => {
+    const root = canvasElement.querySelector('storage-inspector')!
+    const launcher = await findInShadow<HTMLElement>(root, 'si-launcher')
+    await waitFor(() => expect(getComputedStyle(launcher).bottom).toBe('96px'))
+    await userEvent.click(inShadow<HTMLButtonElement>(launcher, 'button'))
+    const panel = await findInShadow(root, 'si-panel')
+    await expect(getComputedStyle(inShadow<HTMLElement>(panel, '.list')).paddingBottom).toBe('80px')
   },
 }

@@ -43,6 +43,9 @@ const dark = `
 /** Storybook 데코레이터처럼 라이트 DOM 에서 토큰을 주입할 때 쓰는 인라인 스타일 문자열 */
 export const themeTokens = { light, dark } as const
 
+/** 하단 네이티브 탭바 등에 가리지 않도록 런처, 시트, 목록이 함께 밀리는 거리 */
+export const bottomInset = css`calc(var(--si-bottom-offset, 0px) + env(safe-area-inset-bottom, 0px))`
+
 /** 루트 컴포넌트 전용. theme 속성이 없으면 시스템 설정을 따른다. */
 export const themeStyles = css`
   :host {

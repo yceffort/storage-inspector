@@ -1,11 +1,12 @@
 import { LitElement, css, html } from 'lit'
+import { bottomInset } from './theme'
 
 export class SiLauncher extends LitElement {
   static styles = css`
     :host {
       position: fixed;
       right: 16px;
-      bottom: 16px;
+      bottom: calc(16px + ${bottomInset});
       z-index: 2147483000;
     }
     button {

@@ -8,6 +8,8 @@ export interface InitOptions {
   schema?: SchemaEntry[]
   /** 생략하면 시스템의 prefers-color-scheme 을 따른다 */
   theme?: Theme
+  /** 하단 네이티브 탭바 등에 가리지 않도록 런처, 시트, 목록을 위로 밀 거리(px) */
+  bottomOffset?: number
 }
 
 export interface Inspector {
@@ -37,6 +39,7 @@ export function init(options: InitOptions = {}): Inspector {
   const el = new StorageInspector()
   el.schema = options.schema ?? []
   el.theme = options.theme ?? null
+  el.bottomOffset = options.bottomOffset ?? 0
   current = el
   mount(el)
   return {
