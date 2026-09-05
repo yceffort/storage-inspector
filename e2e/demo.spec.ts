@@ -114,3 +114,14 @@ test('bottom-offset 만큼 런처와 시트가 위로 밀린다', async ({ page 
   await expect(page.locator('si-entry-sheet .sheet')).toHaveCSS('padding-bottom', '72px')
   await expect(page.locator('si-panel .list')).toHaveCSS('padding-bottom', '56px')
 })
+
+test('z-index 속성으로 런처/패널/시트 순서를 조정한다', async ({ page }) => {
+  await openPanel(page)
+  await expect(page.locator('si-launcher')).toHaveCSS('z-index', '2147483000')
+  await expect(page.locator('si-panel')).toHaveCSS('z-index', '2147483001')
+  await page.locator('storage-inspector').evaluate((el) => el.setAttribute('z-index', '500'))
+  await expect(page.locator('si-launcher')).toHaveCSS('z-index', '500')
+  await expect(page.locator('si-panel')).toHaveCSS('z-index', '501')
+  await rowByKey(page, 'darkMode').locator('.row').click()
+  await expect(page.locator('si-entry-sheet')).toHaveCSS('z-index', '502')
+})

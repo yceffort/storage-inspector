@@ -7,7 +7,7 @@ export class SiLauncher extends LitElement {
       position: fixed;
       right: 16px;
       bottom: calc(16px + ${bottomInset});
-      z-index: 2147483000;
+      z-index: var(--si-z-index);
     }
     button {
       width: 48px;

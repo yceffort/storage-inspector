@@ -38,6 +38,12 @@ init({ schema, theme: 'dark' })
 init({ schema, bottomOffset: 56 })
 ```
 
+`zIndex` 는 런처의 z-index 다. 패널은 +1, 시트는 +2 를 쓴다. 기본값은 2147483000 이고, 호스트 앱의 모달과 순서가 겹칠 때 조정한다.
+
+```ts
+init({ schema, zIndex: 1000 })
+```
+
 스크립트 태그로 쓸 때:
 
 ```html

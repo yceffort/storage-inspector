@@ -26,6 +26,7 @@ export class StorageInspector extends LitElement {
     schema: { attribute: false },
     theme: { reflect: true },
     bottomOffset: { attribute: 'bottom-offset', type: Number, reflect: true },
+    zIndex: { attribute: 'z-index', type: Number, reflect: true },
     isOpen: { state: true },
     tab: { state: true },
     entries: { state: true },
@@ -40,6 +41,7 @@ export class StorageInspector extends LitElement {
         all: initial;
         font: 14px/1.4 system-ui, -apple-system, sans-serif;
         color: var(--si-fg);
+        --si-z-index: 2147483000;
       }
     `,
   ]
@@ -47,6 +49,7 @@ export class StorageInspector extends LitElement {
   schema: SchemaEntry[] = []
   theme: Theme | null = null
   bottomOffset = 0
+  zIndex: number | null = null
   isOpen = false
   tab: StorageKind = 'local'
   entries: Entry[] = []
@@ -69,6 +72,10 @@ export class StorageInspector extends LitElement {
   protected updated(changed: Map<PropertyKey, unknown>) {
     if (changed.has('bottomOffset')) {
       this.style.setProperty('--si-bottom-offset', `${this.bottomOffset}px`)
+    }
+    if (changed.has('zIndex')) {
+      if (this.zIndex === null) this.style.removeProperty('--si-z-index')
+      else this.style.setProperty('--si-z-index', String(this.zIndex))
     }
   }
 

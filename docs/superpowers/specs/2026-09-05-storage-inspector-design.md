@@ -180,4 +180,4 @@ Vitest 로 코어 모듈만 단위 테스트한다. 저장소는 `Storage` 인�
 - 실시간 갱신(폴링, Storage.prototype 패치). 새로고침 버튼으로 대신한다.
 - 타입 오버라이드 영구 저장
 - enum, date 등 추가 타입
-- z-index 커스터마이징 (테마와 하단 오프셋은 2026-09-05 추가됨: `theme`, `bottomOffset` 옵션)
+- (테마, 하단 오프셋, z-index 는 2026-09-05 추가됨: `theme`, `bottomOffset`, `zIndex` 옵션)

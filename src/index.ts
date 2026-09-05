@@ -10,6 +10,8 @@ export interface InitOptions {
   theme?: Theme
   /** 하단 네이티브 탭바 등에 가리지 않도록 런처, 시트, 목록을 위로 밀 거리(px) */
   bottomOffset?: number
+  /** 런처의 z-index. 패널은 +1, 시트는 +2 를 쓴다. 기본 2147483000 */
+  zIndex?: number
 }
 
 export interface Inspector {
@@ -40,6 +42,7 @@ export function init(options: InitOptions = {}): Inspector {
   el.schema = options.schema ?? []
   el.theme = options.theme ?? null
   el.bottomOffset = options.bottomOffset ?? 0
+  el.zIndex = options.zIndex ?? null
   current = el
   mount(el)
   return {

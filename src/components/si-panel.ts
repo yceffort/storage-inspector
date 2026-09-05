@@ -15,7 +15,7 @@ export class SiPanel extends LitElement {
     :host {
       position: fixed;
       inset: 0;
-      z-index: 2147483001;
+      z-index: calc(var(--si-z-index) + 1);
       display: flex;
       flex-direction: column;
       background: var(--si-bg);

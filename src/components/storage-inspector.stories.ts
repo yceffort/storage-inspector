@@ -14,16 +14,21 @@ const schema: SchemaEntry[] = [
 
 interface Args {
   bottomOffset: number
+  zIndex: number
 }
 
 const meta: Meta<Args> = {
   title: 'StorageInspector',
-  args: { bottomOffset: 0 },
-  argTypes: { bottomOffset: { control: { type: 'range', min: 0, max: 120, step: 4 } } },
+  args: { bottomOffset: 0, zIndex: 2147483000 },
+  argTypes: {
+    bottomOffset: { control: { type: 'range', min: 0, max: 120, step: 4 } },
+    zIndex: { control: { type: 'number' } },
+  },
   render: (args, { globals }) =>
     html`<storage-inspector
       .schema=${schema}
       .bottomOffset=${args.bottomOffset}
+      .zIndex=${args.zIndex}
       theme=${globals.theme === 'dark' ? 'dark' : nothing}
     ></storage-inspector>`,
   beforeEach: () => {
@@ -115,5 +120,17 @@ export const WithBottomOffset: Story = {
     await userEvent.click(inShadow<HTMLButtonElement>(launcher, 'button'))
     const panel = await findInShadow(root, 'si-panel')
     await expect(getComputedStyle(inShadow<HTMLElement>(panel, '.list')).paddingBottom).toBe('80px')
+  },
+}
+
+export const WithCustomZIndex: Story = {
+  args: { zIndex: 500 },
+  play: async ({ canvasElement }) => {
+    const root = canvasElement.querySelector('storage-inspector')!
+    const launcher = await findInShadow<HTMLElement>(root, 'si-launcher')
+    await waitFor(() => expect(getComputedStyle(launcher).zIndex).toBe('500'))
+    await userEvent.click(inShadow<HTMLButtonElement>(launcher, 'button'))
+    const panel = await findInShadow<HTMLElement>(root, 'si-panel')
+    await expect(getComputedStyle(panel).zIndex).toBe('501')
   },
 }

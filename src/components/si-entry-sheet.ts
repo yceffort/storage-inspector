@@ -26,7 +26,7 @@ export class SiEntrySheet extends LitElement {
     :host {
       position: fixed;
       inset: 0;
-      z-index: 2147483002;
+      z-index: calc(var(--si-z-index) + 2);
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
