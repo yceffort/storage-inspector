@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <title>storage-inspector demo</title>
+    <style>
+      body { font-family: system-ui, sans-serif; padding: 16px; max-width: 640px; margin: 0 auto; line-height: 1.5; }
+      pre { background: rgba(127, 127, 127, 0.15); padding: 8px; overflow-x: auto; }
+      button { padding: 8px 12px; margin-right: 8px; }
+    </style>
+    <script src="./storage-inspector.iife.js"></script>
+    <script>
+      localStorage.setItem('accessToken', 'eyJhbGciOi.example.token')
+      localStorage.setItem('darkMode', 'true')
+      localStorage.setItem('retryCount', '3')
+      localStorage.setItem('lastVisited', '/home')
+      sessionStorage.setItem('draft', JSON.stringify({ title: '초안', tags: ['a', 'b'] }))
+
+      StorageInspector.init({
+        schema: [
+          { key: 'accessToken', description: '인증 토큰', type: 'string', storage: 'local' },
+          { key: 'darkMode', description: '다크모드', type: 'boolean', storage: 'local' },
+          { key: 'draft', description: '작성 중 글', type: 'json', storage: 'session' },
+          { key: 'neverSet', description: '아직 값 없는 키', type: 'number', storage: 'local' },
+        ],
+      })
+    </script>
+  </head>
+  <body>
+    <h1>storage-inspector demo</h1>
+    <p>우측 하단 버튼을 눌러 패널을 엽니다. 이 페이지는 빌드된 IIFE 번들을 <code>&lt;head&gt;</code> 에서 스크립트 태그로 불러온 것입니다.</p>
+    <p>
+      <button id="dump">localStorage 덤프</button>
+      <button id="reset">초기값으로 되돌리기</button>
+    </p>
+    <pre id="out"></pre>
+    <p><a href="../">Storybook</a> / <a href="https://github.com/yceffort/storage-inspector">GitHub</a></p>
+    <script>
+      document.getElementById('dump').onclick = () => {
+        document.getElementById('out').textContent = JSON.stringify(
+          { localStorage: { ...localStorage }, sessionStorage: { ...sessionStorage } },
+          null,
+          2,
+        )
+      }
+      document.getElementById('reset').onclick = () => {
+        localStorage.clear()
+        sessionStorage.clear()
+        location.reload()
+      }
+    </script>
+  </body>
+</html>

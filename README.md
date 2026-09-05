@@ -4,6 +4,8 @@
 
 Lit 웹 컴포넌트로 만들었고 Shadow DOM 을 써서 호스트 앱의 CSS 와 서로 간섭하지 않습니다. 런타임 의존성은 번들에 포함된 Lit 하나뿐이라 사용하는 쪽에서 따로 설치할 것이 없습니다 (IIFE 기준 gzip 약 10KB).
 
+**데모**: https://yceffort.github.io/storage-inspector/demo/ (빌드된 IIFE 를 스크립트 태그로 넣은 정적 페이지) / **Storybook**: https://yceffort.github.io/storage-inspector/
+
 ## 화면
 
 | 런처 | 목록 (라이트) | 편집 시트 (다크) |
