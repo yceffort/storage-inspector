@@ -1,6 +1,6 @@
 {
   "name": "@yceffort/storage-inspector",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Schema-aware localStorage/sessionStorage inspector for webviews",
   "keywords": [
     "localStorage",
